@@ -19,16 +19,31 @@ from models.inventario_models import SalidaIn, SalidaOut, EntradaIn, EntradaOut
 
 import datetime
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 
 api = FastAPI()
 
+origins = [
+    "http://localhost:8080",
+    "https://localhost.tiangolo.com",
+    "http://localhost.tiangolo.com",
+    "http://localhost", 
+    "http://localhost:8080",
+]
 
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins =origins,
+    allow_credentials =True,
+    allow_methods =["*"],
+    allow_headers=["*"],
+)
 
 
 @api.get("/producto/")
 async def producto():
-    return{"message": database_producto}    
+    return database_producto    
 
 
 @api.get("/producto/codigo/{codigo_prod}")
@@ -54,6 +69,7 @@ async def ingreso_producto(entradaInventario_in: EntradaIn):
 
     producto_in_db.costo_unit_prod = (((producto_in_db.cantidad_prod*producto_in_db.costo_unit_prod)+(entradaInventario_in.cantidad_prod*entradaInventario_in.costo_prod_ent))/(producto_in_db.cantidad_prod + entradaInventario_in.cantidad_prod))
     producto_in_db.cantidad_prod = producto_in_db.cantidad_prod + entradaInventario_in.cantidad_prod
+    producto_in_db.precio_venta_prod= producto_in_db.costo_unit_prod*1.3
 
     update_producto(producto_in_db)
 
@@ -79,6 +95,7 @@ async def salida_producto(salidaInventario_in: SalidaIn):
 
     producto_in_db.cantidad_prod = producto_in_db.cantidad_prod - salidaInventario_in.cantidad_prod
     update_producto(producto_in_db)
+    
 
     salidaInventario_in_db = InventarioInDB(**salidaInventario_in.dict(), cantidad_actual= producto_in_db.cantidad_prod, costo_actual=producto_in_db.costo_unit_prod, costo_prod_ent=0)
     salidaInventario_in_db = save_salida(salidaInventario_in_db)
@@ -86,6 +103,3 @@ async def salida_producto(salidaInventario_in: SalidaIn):
     salidaInventario_out = SalidaOut(**salidaInventario_in_db.dict())
 
     return  salidaInventario_out
-
-
-
