@@ -30,8 +30,10 @@ origins = [
     "http://localhost.tiangolo.com",
     "http://localhost", 
     "http://localhost:8080",
-    "https//g3m4-g10-catalogo-app.herokuapp.com",
-    "http//g3m4-g10-catalogo-app.herokuapp.com"
+    "https://g3m4-g10-catalogo-app1.herokuapp.com",
+    "https://g3m4-g10-catalogo-app1.herokuapp.com/#",
+    "http://g3m4-g10-catalogo-app1.herokuapp.com",
+    "http://g3m4-g10-catalogo-app1.herokuapp.com/#",
 ]
 
 api.add_middleware(
