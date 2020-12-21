@@ -107,3 +107,16 @@ async def salida_producto(salidaInventario_in: SalidaIn):
     salidaInventario_out = SalidaOut(**salidaInventario_in_db.dict())
 
     return  salidaInventario_out
+
+@api.post("/producto/create")
+async def create_producto(producto : ProductoInDB):
+
+    producto_in_db = get_producto(producto.codigo_prod)
+
+    if producto_in_db != None:
+        raise HTTPException(status_code=404, detail="El código del producto ya se encuentra creado") 
+
+    database_producto[producto.codigo_prod] = producto
+
+    return producto
+
